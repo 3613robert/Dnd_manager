@@ -1,0 +1,186 @@
+import json
+import random
+
+spell_list = {   # Add spells as needed
+}
+
+stats_list = {
+    "attack_modifier": +4,
+    "spell attack modifier": +5,
+    "saving throw dc": "13",
+    # Add more stats as needed, Started with a few needed for later functions
+}
+inventory_list = {}
+
+def display_spell_list():
+    print("Spell List:")
+    for spell_name in spell_list:
+        print(f"- {spell_name}") #Shows spell list
+        
+def display_stats_list():
+    print("Stats:")
+    for stat, number in stats_list.items():
+        print(f"- {stat}: {number}")
+    print(f"{'-'*15}") #shows stats
+    
+def get_spell_description(spell_name):
+    lowercase_spell_name = spell_name.lower()
+    for name, description in spell_list.items():
+        if lowercase_spell_name == name.lower():
+            return description
+    return "Spell not found in the list." #for when user inputs 'm' for more info (description) on spell
+    
+def add_or_remove_stat():
+    choice_stat = input('(a)dd or (r)emove a new stat? Type (e)xit to return to the main menu:\n')
+    if choice_stat == 'a':
+        add_stat_name = input('Name stat:\n').lower()
+        add_stat_mod = int(input(f'What is the modifier of {add_stat_name}?:\n'))
+        stats_list[add_stat_name] = add_stat_mod
+        print('The stat has been added!')
+        display_stats_list()
+    elif choice_stat == 'r':
+        remove_stat = input('Which stat would you like to remove?\n').lower()
+        if remove_stat in stats_list:
+            del stats_list[remove_stat]
+            print(f"The stat {remove_stat} has been removed.")
+            display_stats_list()
+        else:
+            print(f"Stat '{remove_stat}' not found.")
+    elif choice_stat != 'e':
+        print("Invalid choice. Please enter 'a', 'r', or 'e'.")
+#adds and removed stats. When user adds existing stat name it gets modified.
+
+def add_new_spell():
+    add_spell = input("\nEnter spell name: ")
+    description_new = input("\nEnter spell description: ")
+    spell_list[add_spell] = description_new
+    print(f'\nThe spell {add_spell} has been added to your spell list!\n)
+# adds new spells with description which can be displayed on typing 'm' in main menu
+
+def remove_spell():
+    remove_spell = input('Which spell would you like to remove?:\n')
+    lowercase_remove_spell = remove_spell.lower()
+    original_spell = next((key for key in spell_list if key.lower() == lowercase_remove_spell), None)
+
+    if original_spell is not None:
+        del spell_list[original_spell]
+        print(f"\nThe spell {remove_spell} has been removed from your spell list!\n{'-'*30}\n")
+    else:
+        print(f"\nSpell '{remove_spell}' not found in your spell list.\n{'-'*15}\n")
+#removing spells, was a tricky one to account for lower and uppercase spelling. must be a more efficient way, tips appreciated.
+
+def roll_dice():
+    print('Which dice do you want to roll?\n')
+    dice_choice = input('d4, d6, d8, d10, d12, or d20? Choose (r) for return:\n')
+    while dice_choice != 'r':
+        if dice_choice in ['d4', 'd6', 'd8', 'd10', 'd12', 'd20']:
+            sides = int(dice_choice[1:])
+            print('*',random.randint(1, sides),'*')
+        else:
+            print("Invalid choice. Please choose a valid dice (d4, d6, d8, d10, d12, or d20).")
+        dice_choice = input('Choose another dice to roll or type (r) to return to main: ')
+# dice roller, loops until 'r' is typed to return to main menu. Looking to update to roll multiple of a die at same time. 
+
+def attack_roll():
+    attack_type = input('(s)pell attack or (w)eapon attack?\n')
+    if attack_type == 'w':
+        d20_roll = random.randint(1,20)           
+        attack_roll = d20_roll + stats_list['attack_modifier']
+        print(f"{'*'*15}")
+        print(f'Dice roll = {d20_roll}\nAttack roll = {attack_roll}')
+        if d20_roll == 20:
+            print('Natural 20! That is a critical hit!')
+        print(f"{'*'*15}")
+    if attack_type == 's':
+        d20_roll = random.randint(1,20)           
+        attack_roll = d20_roll + stats_list['spell attack modifier']
+        print(f"{'*'*15}")
+        print(f'Dice roll = {d20_roll}\nAttack roll = {attack_roll}')
+        if d20_roll == 20:
+            print('Natural 20! That is a critical hit!')
+        print(f"{'*'*20}")
+#very basic attack roll function only for dex based weapon that char is proficient in and spell attack. uses stats in stats list to determine roll.
+
+def display_inventory():
+    print('inventory')
+    for item, amount in inventory_list.items():
+        print(f"- {item}:{'_'*5}{amount}")
+    print(f"{'-'*15}")
+
+def inventory():
+    option_inv = input('Would you like to (a)dd or (re)move items? (r) to return:\n')
+    while option_inv != 'r':
+        if option_inv == 'a':
+            add_inv = input('What would you like to (a)dd to your inventory?\n').lower()
+            amount = int(input('How many?: \n'))
+            if add_inv in inventory_list:
+                inventory_list[add_inv] += amount
+                print(f'The {add_inv} has been added!')
+            else:
+                inventory_list[add_inv] = amount
+            print(f"{'*'*15}")
+            display_inventory()
+            print(f"{'*'*15}")
+        elif option_inv == 're':
+            rem_inv = input('What would you like to remove?\n').lower()
+            rem_amount = int(input('How many?:\n'))
+            if rem_inv in inventory_list:
+                inventory_list[rem_inv] = (amount - rem_amount)
+                print(f"{rem_amount} {rem_inv} removed from inventory")
+                if inventory_list[rem_inv] <= 0:
+                    del inventory_list[rem_inv]
+                    print(f"{rem_inv} removed from inventory")
+            else:
+                print('Item not in your inventory\n')
+            print(f"{'*'*15}")    
+            display_inventory()
+            print(f"{'-'*15}")
+        else:
+            print('Please choose valid choice. (a) to add, (re) to remove and (r) to eturn to main menu')
+        option_inv = input('Would yu like to (a)dd or (re)move items? Enter (r) to return:\n')
+#inventory manager. item and amount can be added to inventory aswell as removed. accounts for removal of amount (e.g. 2 arrows removed out of 20 will show 18) if 0 are left: item is removed
+
+def save_data():
+    with open("spell_data.json", "w") as file:
+        data = {"spell_list": spell_list, "stats_list": stats_list}
+        json.dump(data, file)
+
+def load_data():
+    try:
+        with open("spell_data.json", "r") as file:
+            data = json.load(file)
+            return data.get("spell_list", {}), data.get("stats_list", {})
+    except FileNotFoundError:
+        return{}, {}
+#save char to load for later time
+
+while True:
+    print(f'{"-"*15}')
+    display_spell_list()
+    print("\nMain Menu:")
+    print("(m)ore info, (s)tats, (a)dd spell, (r)emove spell, (i)nventory, (at)tack, (d)ice roller, (sa)ve, (l)oad or (e)xit")
+    choice = input("Enter your choice:\n")
+    if choice == 'm':
+        selected_spell = input("\nEnter the name of the spell for more information: ")
+        description = get_spell_description(selected_spell)
+        print(f"\n{description}\n{'-'*30}")
+    elif choice == 's':
+        display_stats_list()
+        add_or_remove_stat()
+    elif choice == 'i':
+        display_inventory()
+        inventory()
+    elif choice == 'at':
+        attack_roll()
+    elif choice == 'a':
+        add_new_spell()
+    elif choice == 'r':
+        remove_spell()
+    elif choice == 'd':
+        roll_dice()
+    elif choice == 'sa':
+        save_data()
+        print("Data saved!")
+    elif choice == 'l':
+        spell_list, stats_list = load_data()
+# the actual code for that is basically the main menu. Exiting function will lead to display of main menu and option to start different function.
