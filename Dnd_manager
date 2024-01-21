@@ -31,24 +31,36 @@ def get_spell_description(spell_name):
     return "Spell not found in the list." #for when user inputs 'm' for more info (description) on spell
     
 def add_or_remove_stat():
-    choice_stat = input('(a)dd or (r)emove a new stat? Type (e)xit to return to the main menu:\n')
-    if choice_stat == 'a':
-        add_stat_name = input('Name stat:\n').lower()
-        add_stat_mod = int(input(f'What is the modifier of {add_stat_name}?:\n'))
-        stats_list[add_stat_name] = add_stat_mod
-        print('The stat has been added!')
-        display_stats_list()
-    elif choice_stat == 'r':
-        remove_stat = input('Which stat would you like to remove?\n').lower()
-        if remove_stat in stats_list:
-            del stats_list[remove_stat]
-            print(f"The stat {remove_stat} has been removed.")
-            display_stats_list()
+    while True:
+        choice_stat = input('(a)dd or (r)emove a new stat? Type (e)xit to return to the main menu:\n')
+        if choice_stat == 'a':
+            add_stat_name = input('Name stat:\n').lower()
+            try:
+                add_stat_mod = int(input(f'What is the modifier of {add_stat_name}?:\n'))
+                if add_stat_name in stats_list:
+                    stats_list[add_stat_name] = add_stat_mod
+                    print(f"{add_stat_name} had been modified!")
+                else:
+                    stats_list[add_stat_name] = add_stat_mod
+                    print('The stat has been added!')
+                display_stats_list()
+                break  # Break out of the loop if input and processing are successful
+            except ValueError:
+                print('Please enter numbers only. Try again.')
+        elif choice_stat == 'r':
+            remove_stat = input('Which stat would you like to remove?\n').lower()
+            if remove_stat in stats_list:
+                del stats_list[remove_stat]
+                print(f"The stat {remove_stat} has been removed.")
+                display_stats_list()
+                break  # Break out of the loop if input and processing are successful
+            else:
+                print(f"Stat '{remove_stat}' not found.")
+        elif choice_stat == 'e':
+            break  # Break out of the loop to exit
         else:
-            print(f"Stat '{remove_stat}' not found.")
-    elif choice_stat != 'e':
-        print("Invalid choice. Please enter 'a', 'r', or 'e'.")
-#adds and removed stats. When user adds existing stat name it gets modified.
+            print("Invalid choice. Please enter 'a', 'r', or 'e'. Try again.")
+#updated with a 'try' function to check for non integer inputs aswell as a while loop to loop to start stats page when valueerror
 
 def add_new_spell():
     add_spell = input("\nEnter spell name: ")
