@@ -79,26 +79,20 @@ def roll_dice():
         else:
             print("Invalid choice. Please choose a valid dice (d4, d6, d8, d10, d12, or d20).")
         dice_choice = input('Choose another dice to roll or type (r) to return to main: ')
-# dice roller, loops until 'r' is typed to return to main menu. Looking to update to roll multiple of a die at same time. 
+# dice roller, loops until 'r' is typed to return to main menu. Looking to update to roll multiple of a die at same time.
 
 def attack_roll():
     attack_type = input('(s)pell attack or (w)eapon attack?\n')
-    if attack_type == 'w':
-        d20_roll = random.randint(1,20)           
+    d20_roll = random.randint(1,20)
+    if attack_type == 'w':           
         attack_roll = d20_roll + stats_list['attack_modifier']
-        print(f"{'*'*15}")
-        print(f'Dice roll = {d20_roll}\nAttack roll = {attack_roll}')
-        if d20_roll == 20:
-            print('Natural 20! That is a critical hit!')
-        print(f"{'*'*15}")
-    if attack_type == 's':
-        d20_roll = random.randint(1,20)           
+    if attack_type == 's':           
         attack_roll = d20_roll + stats_list['spell attack modifier']
-        print(f"{'*'*15}")
-        print(f'Dice roll = {d20_roll}\nAttack roll = {attack_roll}')
-        if d20_roll == 20:
-            print('Natural 20! That is a critical hit!')
-        print(f"{'*'*20}")
+    print(f"{'*'*15}")
+    print(f'Dice roll = {d20_roll}\nAttack roll = {attack_roll}')
+    if d20_roll == 20:
+        print('Natural 20! That is a critical hit!')
+    print(f"{'*'*20}")
 #very basic attack roll function only for dex based weapon that char is proficient in and spell attack. uses stats in stats list to determine roll.
 
 def display_inventory():
